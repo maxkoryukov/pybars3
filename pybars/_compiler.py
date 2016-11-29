@@ -117,6 +117,7 @@ pathseg ::= '[' <notclosebracket>+:symbol ']' => u''.join(symbol)
     | '.' => u''
 pathfinish :expected ::= <start> '/' <path>:found ?(found == expected) <finish>
 symbolfinish :expected ::= <start> '/' <symbol>:found ?(found == expected) <finish>
+raw_blockrule ::= <start> '{' '{' <block_inner>:i <path>:p <arguments>:arguments <spaces> <finish> => ('subexpr', p, arguments)
 blockrule ::= <start> '#' <block_inner>:i
       <template>:t <alttemplate>:alt_t <symbolfinish i[0]> => ('block',) + i + (t, alt_t)
     | <start> '^' <block_inner>:i

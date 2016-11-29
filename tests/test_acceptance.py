@@ -699,6 +699,42 @@ class TestAcceptance(TestCase):
 
         self.assertRender(template, context, result, helpers)
 
+    def test_raw_block(self):
+
+        def rawcontent(this, options):
+            x = options['fn']()
+            print x
+            return x
+
+        helpers = {'raw-content': rawcontent}
+
+        template = u"{{{{raw-content}}}}{{text}}! {{{{/raw-content}}}}cruel {{world}}!{{{{raw-content}}}} {{{{/raw-content}}}}."
+        context = {
+            'world': "WoRlD",
+            'text': "invisible",
+        }
+        result = u"{{text}}! cruel WoRlD! ."
+
+        self.assertRender(template, context, result, helpers)
+
+    def test_empty_raw_block_raises(self):
+
+        def rawcontent(this, options):
+            x = options['fn']({'text': "GOODBYE"})
+            print x
+            return x
+
+        helpers = {'raw': rawcontent}
+
+        template = u"{{{{raw}}}}{{{{/raw}}}}"
+        context = {
+            'world': "WoRlD",
+        }
+        result = None
+        error = 'Error at character 11 of line 1 near {{{{raw}}}}'
+
+        self.assertRender(template, context, result, helpers, error=error)
+
     def test_block_helper_staying_in_the_same_context(self):
 
         def form(this, options):
